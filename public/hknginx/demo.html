@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html style="width: 100%; height:100%">
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="0" />
+
+  </head>
+  <body style="width: 100%; height:100%; margin:0">
+    <div id="divPlugin" class="plugin" style="width: 100%; height: 100%"></div>
+  </body>
+  <style>
+    .draw-window{
+      border: none !important;
+    }
+  </style>
+	<script src="./jquery-1.7.1.min.js"></script>
+	<script src="./codebase/encryption/AES.js"></script>
+	<script src="./codebase/encryption/cryptico.min.js"></script>
+	<!-- <script src="../codebase/encryption/encryption.js"></script> -->
+	<script src="./codebase/encryption/crypto-3.1.2.min.js"></script>
+	<script src="./codebase/jsPlugin-1.2.0.min.js"></script>
+	<script id="videonode" src="./codebase/webVideoCtrl.js"></script>
+  <script src="./demo.js"></script>
+  <script>
+    initPlugin(2)
+    let loginSuccessArr = [], loginFailArr = []
+    window.addEventListener('message',async (messageEvent)=>{
+			if (messageEvent.source != window.parent.window.parent) return;
+			const { connectType, params } = messageEvent.data;
+      if (connectType == 'login') {
+        loginSuccessArr=[], loginFailArr = []
+          const {cameraList} = params
+          await initSigleCamera(cameraList[0], 0)
+          await initSigleCamera(cameraList[1], 1)          
+          await initSigleCamera(cameraList[2], 2)
+          await initSigleCamera(cameraList[3], 3)
+
+          window.parent.postMessage({
+            connectType: 'refresh' // 告诉父级定时刷新
+          })
+
+			}
+      // 切换摄像头
+      if(connectType == 'changeCamera'){
+        const {camera,win_index} = params
+        clickLogin(camera).then(res=>{
+          clickStopRealPlay(win_index).then(()=>{
+            playSigleCamera(camera, win_index)
+          })
+        })
+      }
+      if(connectType === 'refresh'){
+        try {
+          const {cameraList} = params
+          await refreshSigleCamera(cameraList[0], 0)
+          await refreshSigleCamera(cameraList[1], 1)
+          await refreshSigleCamera(cameraList[2], 2)
+          await refreshSigleCamera(cameraList[3], 3)
+
+        } catch (error) {
+          window.parent.postMessage({
+            connectType: 'reload' // 告诉父级重载ifame
+          })
+        }
+      }
+
+      // 单个摄像头预览
+      function playSigleCamera(camera, win_index){
+        return clickStartRealPlay({
+              ...camera,
+              win_index,
+              iChannelID: camera.channel
+        })
+      }
+      // 进入画面时初始化
+      async function initSigleCamera(camera, win_index){
+        try {
+            await clickLogin(camera)
+            await playSigleCamera(camera, win_index)
+            loginSuccessArr.push(camera)
+          } catch (error) {
+            loginFailArr.push(camera)
+          }
+      }
+
+      async function refreshSigleCamera(camera, win_index){
+        const obj = loginFailArr.find(v=>v.id === camera.id)
+        console.log('-----定时刷新', camera.ip);
+        if(obj){
+          console.log('-----进入未登录方法', camera.ip);
+          try {
+            await clickLogin(camera)
+            await playSigleCamera(camera, win_index)
+            loginSuccessArr.push(camera)
+            loginFailArr = loginFailArr.filter(v=>v.id !== camera.id)
+          } catch (error) {
+            console.log('----refresh',`${camera.ip}登录失败` );
+          }
+        }else{
+          try {
+            console.log('>>>>>>进入judgeOnline');
+            await judgeOnline(camera, win_index)
+          } catch (error) {
+            // 走 judgeOnline 的错误判断
+            console.log('>>>>>>>进入judgeOnline发送http请求失败', `${camera.ip}http状态为${error}`);
+            try {
+              // -------------方案一-------------直接刷新iframe
+              // 走登出重新预览不可行，窗口是灰的，但是走预览会提示已经在播放了
+                window.parent.postMessage({
+                  connectType: 'reload' // 告诉父级重载ifame
+                })
+              } catch (error) {
+                throw(Error('重登失败')) // 向上抛出错误
+            }
+          }
+        }
+      }
+    })
+  </script>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html style="width: 100%; height:100%">
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="0" />
+    
+  </head>
+  <body style="width: 100%; height:100%; margin:0">
+    
+    <div id="fullbtn"  onclick="clickFullScreen();" title="全屏" style="position: absolute; top: 5px; right: 5px; cursor: pointer; z-index: 99; background: rgba(0,0,0,0.5); padding: 3px;"><svg t="1687769660507" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3088" width="14" height="14"><path d="M368.896 192H224a32 32 0 0 0-32 32v137.888a32 32 0 0 0 64 0V256h112.896a32 32 0 0 0 0-64zM784.864 192H640a32 32 0 1 0 0 64h112.864v105.888a32 32 0 1 0 64 0V224a32 32 0 0 0-32-32zM368.896 777.92H256V672a32 32 0 1 0-64 0v137.92a32 32 0 0 0 32 32h144.896a32 32 0 1 0 0-64zM784.864 640a32 32 0 0 0-32 32v105.92H640a32 32 0 1 0 0 64h144.864a32 32 0 0 0 32-32V672a32 32 0 0 0-32-32z" fill="rgba(255,255,255,0.7)" p-id="3089"></path><path d="M912 48h-800c-35.296 0-64 28.704-64 64v800c0 35.296 28.704 64 64 64h800c35.296 0 64-28.704 64-64v-800c0-35.296-28.704-64-64-64z m-800 864v-800h800l0.064 800H112z" fill="rgba(255,255,255,0.7)" p-id="3090"></path></svg></div>
+    <div id="divPlugin" class="plugin" style="width: 100%; height: 100%"></div>
+  </body>
+  <style>
+    .draw-window{
+      border: none !important;
+    }
+  </style>
+	<script src="./jquery-1.7.1.min.js"></script>
+	<script src="./codebase/encryption/AES.js"></script>
+	<script src="./codebase/encryption/cryptico.min.js"></script>
+	<!-- <script src="../codebase/encryption/encryption.js"></script> -->
+	<script src="./codebase/encryption/crypto-3.1.2.min.js"></script>
+	<script src="./codebase/jsPlugin-1.2.0.min.normal.js"></script>
+	<script id="videonode" src="./codebase/webVideoCtrl.normal.js"></script>
+    <script src="./demo.js"></script>
+  <script>
+    initPlugin()
+     window.addEventListener('message',async (messageEvent)=>{
+        if (messageEvent.source != window.parent.window.parent) return;
+        const { connectType, params } = messageEvent.data;
+        if (connectType == 'login') {
+          const {camera} = params
+          try {
+            await clickLogin(camera)
+            await playSigleCamera(camera, 0)
+            window.parent.postMessage({ // 所有视频刷新完了 告诉父级再刷新
+              connectType: 'refresh' // 告诉父级定时刷新
+            })
+            
+          } catch (error) {
+            window.parent.postMessage({ // 所有视频刷新完了 告诉父级再刷新
+              connectType: 'refresh' // 告诉父级定时刷新
+            })
+          }
+        }
+        if(connectType === 'refresh'){
+          const {camera} = params
+          refreshCamera(camera)
+        }
+     })
+
+     async function refreshCamera(camera){
+      try {
+            await judgeOnline(camera)
+          } catch (error) {
+            // 走 judgeOnline 的错误判断
+            console.log('>>>>>>>进入judgeOnline发送http请求失败', `${camera.ip}http状态为${error}`);
+            try {
+                await clickLogout(camera)
+                await clickLogin(camera)
+                await clickStopRealPlay(0)
+                await playSigleCamera(camera, 0)
+              } catch (error) {
+                throw(Error('重登失败')) // 向上抛出错误
+            }
+          }
+     }
+
+     // 单个摄像头预览
+     function playSigleCamera(camera, win_index){
+        return clickStartRealPlay({
+              ...camera,
+              win_index,
+              iChannelID: camera.channel
+        })
+      }
+  </script>
+</html>

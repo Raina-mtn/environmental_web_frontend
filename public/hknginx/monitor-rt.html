@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html style="width: 100%; height:100%">
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <meta http-equiv="Expires" content="0" />
+    
+  </head>
+  <body style="width: 100%; height:100%; margin:0">
+    <div id="divPlugin" class="plugin" style="width: 100%; height: 100%"></div>
+  </body>
+  <style>
+    .draw-window{
+      border: none !important;
+    }
+  </style>
+	<script src="./jquery-1.7.1.min.js"></script>
+	<script src="./codebase/encryption/AES.js"></script>
+	<script src="./codebase/encryption/cryptico.min.js"></script>
+	<!-- <script src="../codebase/encryption/encryption.js"></script> -->
+	<script src="./codebase/encryption/crypto-3.1.2.min.js"></script>
+	<script src="./codebase/jsPlugin-1.2.0.min.rt.js"></script>
+	<script id="videonode" src="./codebase/webVideoCtrl.rt.js"></script>
+    <script src="./demo.js"></script>
+  <script>
+     window.addEventListener('message',async (messageEvent)=>{
+        if (messageEvent.source != window.parent.window.parent) return;
+        const { connectType, params } = messageEvent.data;
+        if (connectType == 'login') {
+          const {cameraList} = params
+          try {
+            await clickLogin(cameraList[0])
+            await playSigleCamera(camera[0], 0)
+            
+          } catch (error) {
+            
+          }
+          try {
+            await clickLogin(cameraList[1])
+            await playSigleCamera(camera[1],1)
+            
+          } catch (error) {
+            
+          } 
+        }
+     })
+  </script>
+</html>

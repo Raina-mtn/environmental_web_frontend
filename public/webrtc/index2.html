@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html style="width: 100%; height:100%;">
+
+<head>
+  <title></title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+  <meta http-equiv="Expires" content="0" />
+
+</head>
+
+<body style="width: 100%; height:100%; margin:0">
+  <video id='video2' style='object-fit:cover; width: 100%;height:95%;background-color: #333;' autoplay controls autobuffer mutedpreload='auto'></video>
+  <script type="text/javascript" src="./webrtcstreamer.js"></script>
+  <script>
+    var webRtcServer = null;
+    //页面加载时加载视频画面
+    window.onload = function () {
+      //video：需要绑定的video控件ID
+      //127.0.0.1：启动webrtc-streamer的设备IP
+      webRtcServer = new WebRtcStreamer("video2", "http://192.168.4.245:8003/");
+      // 需要查看的rtsp地址		
+      // webRtcServer.connect("rtsp://admin:abcd1234@172.17.6.81:554/h264/ch1/main/av_stream");
+    }
+
+    window.addEventListener('message', async (messageEvent) => {
+      if (messageEvent.source != window.parent.window.parent) return;
+      const { connectType, params } = messageEvent.data;
+
+      // 切换摄像头
+      if (connectType == `changeCamera${params.win_index}`) {
+        const { camera } = params
+        // const { username, password, ip, channel } = { username: 'admin', password: 'abcd1234', ip: '172.17.6.81', channel: 1 } //camera
+        const { username, password, ip, channel } = camera //camera
+        // webRtcServer.connect(`rtsp://${username}:${password}@${ip}:554/h264/ch${channel}/main/av_stream`);
+        webRtcServer.connect(`rtsp://${username}:${password}@${ip}:554/Streaming/Channels/${channel}`);
+        // webRtcServer.connect(`rtsp://admin:dawi1234567@192.168.1.100:554/Streaming/Channels/102`);
+      }
+    })
+
+    //页面退出时销毁
+    window.onbeforeunload = function () {
+      webRtcServer.disconnect();
+    }
+  </script>
+</body>
+<style>
+  .draw-window {
+    border: none !important;
+  }
+</style>
+
+</html>

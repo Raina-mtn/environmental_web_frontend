@@ -1,0 +1,226 @@
+
+$--sidebar: unset;
+
+// default
+$--sidebar-front-defalut: rgba(255, 255, 255, 0.65);
+
+// hover
+$--sidebar-front-hover: #fff;
+$--sidebar-item-hover: #148AFF;
+
+// active
+$--sidebar-front-active: #fff;
+$--sidebar-item-active: #148AFF;
+#app {
+  .sidebar-container {
+    .el-menu {
+      .el-menu-item {
+        color: $--sidebar-front-defalut !important;
+      }
+      .el-menu-item:hover {
+        color: $--sidebar-front-hover !important;
+        background-color: $--sidebar-item-hover !important;
+
+      }
+    }
+
+    .el-submenu {
+      .el-submenu__title {
+        color: $--sidebar-front-defalut !important;
+        background: none !important;
+        background-color: none !important;
+      }
+      .el-menu-item{
+        background: none !important;
+      }
+      .el-menu-item.is-active {
+        color: $--sidebar-front-hover !important;
+        background: $--sidebar-item-hover !important;
+      }
+    }
+    
+    .el-menu-item.is-active {
+      color: $--sidebar-front-hover !important;
+      background: $--sidebar-item-hover !important;
+    }
+  }
+  .app-main{
+    .wrapper{
+      height: 100%;
+      // padding: 16px 0 16px 16px !important;
+      padding: 16px !important;
+      background-color: #F6F6F6;
+    }
+  }
+
+  .el-table th.el-table__cell:not(mtable){
+    background-color: #f6f6f6 !important;
+  }
+  // 驾驶舱表格样式
+    .mtable{
+      color: #fff !important;
+      .el-table{
+        background: none !important;
+        color: #fff !important;
+        th.el-table__cell{
+          color: #fff !important;
+          background-color: #295599 !important;
+        }
+        .el-table__row{
+          background-color: #10325b;
+          .el-table__cell.is-leaf{
+            border-bottom: 1px solid transparent;
+          }
+        }
+      }
+      .el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell{
+        background-color: rgba(53, 97, 157, 0.25) !important;
+      }
+      .el-checkbox__inner,.el-input__inner,.btn-prev,.el-pager li,.btn-next{
+        color: #fff !important;
+        background-color: #295599 !important;
+      }
+      .el-table--border .el-table__cell{
+        border-color:#295599;
+      }
+      .el-table--border,.el-table td.el-table__cell{
+        border-color:#295599;
+        border-bottom:none;
+        border-left:none;
+      }
+      .el-table--border::after, .el-table--group::after, .el-table::before{
+        background-color: transparent;
+      }
+      td.el-table__cell:not([rowspan="1"]){
+        border-bottom:1px solid #295599;
+        // border-bottom:none;
+      }
+      .el-table__fixed-right::before,.el-table::before{
+        background-color: transparent;
+      }
+      .el-pagination__total,.el-pagination__jump{
+        color: #fff;
+      }
+      .el-table__body tr.hover-row>td.el-table__cell,.el-table--enable-row-hover .el-table__body tr:hover>td.el-table__cell{
+        background-color: #295599 !important;
+      }
+      .el-table th.el-table__cell.is-leaf{
+        border-color: transparent;
+      }
+    }
+}
+//select
+.el-select-dropdown__wrap{
+  margin-bottom: 0 !important;
+}
+
+.el-button--primary{
+  background-color:$--sidebar-item-active ;
+}
+
+.el-dialog{
+  .el-dialog__header{
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: solid 1px #F0F0F0;
+  }
+}
+
+//tag
+.el-tag:before{
+  content: '';
+  display:inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #1890FF;
+  margin-right: 4px;
+}
+.el-tag--success:before{
+  content: '';
+  display:inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #52C41A;
+  margin-right: 4px;
+}
+.el-tag--warning:before{
+  content: '';
+  display:inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #FAAD14;
+  margin-right: 4px;
+}
+.el-tag--danger:before{
+  content: '';
+  display:inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background-color: #FF4D4F;
+  margin-right: 4px;
+}
+.el-tag--info:before{
+  content: '';
+  display:inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  // background-color: #EE62D5;
+  margin-right: 4px;
+}
+// .el-tag--info{
+//   color: #EE62D5 !important;
+//   background-color: #FFEEFD !important;
+// }
+
+
+
+.el-scrollbar__wrap{
+  overflow-x: hidden !important;
+}
+
+
+// 禁止div选中
+div{
+  -moz-user-select:none; /* Firefox私有属性 */
+  -webkit-user-select:none; /* WebKit内核私有属性 */
+  -ms-user-select:none; /* IE私有属性(IE10及以后) */
+  -khtml-user-select:none; /* KHTML内核私有属性 */
+  -o-user-select:none; /* Opera私有属性 */
+  user-select:none; /* CSS3属性 */
+}
+
+// 驾驶舱时间选择
+.mdate-picker{
+  background-color: #133864 !important;
+  color: #fff;
+  .el-input__inner,.el-picker-panel__footer{
+    background-color: #133864 !important;
+    color: #fff;
+  }
+  .is-plain{
+    background-color: #0873cb;
+    color: #fff;
+  }
+  .el-button.is-plain:hover{
+    background-color: #133864 !important;
+  }
+  th,.el-picker-panel__icon-btn,.el-date-picker__header-label{
+    color: #fff !important;
+  }
+}
+
+// 驾驶舱下拉框
+.mselect{
+  background-color: #133864 ;
+  .el-select-dropdown__item:hover,.el-select-dropdown__item.hover{
+    background-color: #0873cb;
+  }
+  .el-select-dropdown__item{
+    color:#fff;
+  }
+}
